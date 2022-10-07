@@ -1,15 +1,15 @@
 #include <bits/stdc++.h>
 
-#define DEBUG 55
+#define DEBUG 6
 
-/*
+
 std::fstream& lineat(std::fstream& file, unsigned int num){
     file.seekg(std::ios::beg);
     for(int i=0; i < num - 1; ++i){
         file.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
     }
     return file;
-}*/
+}
 
 //Ana matris
 int matris[9][9];
@@ -62,6 +62,8 @@ bool solve_sudoku() {
 }
 
 void print_answer() {
+
+    std::cout << std::endl;
     for(int i=0; i<9; i++) {
         for(int j=0;j<9;j++) {
             std::cout << matris[i][j] << ", ";
@@ -72,23 +74,45 @@ void print_answer() {
 
 int main(int argc, char* argv[]) {
 
-    std::fstream read_file("./test");
+    std::cout << "debug=" << DEBUG
+              << ", preparing...\n";
 
-    for(int row=0;row<9;row++) {
-        for(int col=0; col<9;col++) {
-            read_file >> matris[row][col];
+    std::this_thread::sleep_for(std::chrono::milliseconds(500*DEBUG));
+
+    std::cout << "go!\n";
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+
+    if(DEBUG != 0) {
+        for(int i=1;i<=DEBUG; i++) {
+            std::fstream read_file("./test");
+            lineat(read_file,(10*i)-9);
+            for(int row=0;row<9;row++) {
+                for(int col=0; col<9;col++) {
+                    read_file >> matris[row][col];
+                }
+            }
+            auto start = std::chrono::high_resolution_clock::now();
+            solve_sudoku();
+            auto stop = std::chrono::high_resolution_clock::now();
+            auto exectime = std::chrono::duration_cast<std::chrono::milliseconds>(stop-start);
+            print_answer();
+            std::cout << "time: " << exectime.count() << " ms\n";
         }
+    } else {
+            std::fstream read_file("./test");
+            for(int row=0;row<9;row++) {
+                for(int col=0; col<9;col++) {
+                    read_file >> matris[row][col];
+                }
+            }
+            auto start = std::chrono::high_resolution_clock::now();
+            solve_sudoku();
+            auto stop = std::chrono::high_resolution_clock::now();
+            auto exectime = std::chrono::duration_cast<std::chrono::milliseconds>(stop-start);
+            print_answer();
+            std::cout << "time: " << exectime.count() << " ms\n";
     }
-
-    auto start = std::chrono::high_resolution_clock::now();
-
-    solve_sudoku();
-    print_answer();
-
-    auto stop = std::chrono::high_resolution_clock::now();
-    auto exectime = std::chrono::duration_cast<std::chrono::milliseconds>(stop-start);
-    
-    std::cout << "\nVerilen sudoku bulmacasi " << exectime.count() << " ms'de cozuldu.\n";
 
     return 0;
 }
